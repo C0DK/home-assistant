@@ -484,6 +484,23 @@ class MediaPlayerDevice(Entity):
     @property
     def media_image_url(self):
         """Image url of current playing media."""
+
+        # try getting from last FM if API key added
+        if self.media_artist and self.media_album_name:
+            import requests
+            API_KEY = "d78cc7c1cac7cf84fdc3e6a839b96bb7"
+
+            payload = {
+                'method': 'album.getinfo',
+                'api_key': API_KEY,
+                'artist': self.media_artist,
+                'album': self.media_album_name,
+                'format': "json",
+            }
+            r = requests.get('http://ws.audioscrobbler.com/2.0/', params=payload)
+
+            return r.json()["album"]["image"][-1]["#text"]
+
         return None
 
     @property
